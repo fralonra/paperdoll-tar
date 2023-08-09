@@ -85,6 +85,14 @@ where
                     .map(|ext| ext.to_string_lossy().to_string())
             })
             .flatten()
+            .map(|ext| {
+                // Saving WebP is not supported
+                if &ext == "webp" {
+                    "png".to_owned()
+                } else {
+                    ext
+                }
+            })
             .unwrap_or("png".to_owned());
 
         let filename = format!("doll_{}.{}", doll.id(), extension);
@@ -114,6 +122,14 @@ where
                     .map(|ext| ext.to_string_lossy().to_string())
             })
             .flatten()
+            .map(|ext| {
+                // Saving WebP is not supported
+                if &ext == "webp" {
+                    "png".to_owned()
+                } else {
+                    ext
+                }
+            })
             .unwrap_or("png".to_owned());
 
         let filename = format!("fragment_{}.{}", fragment.id(), extension);
