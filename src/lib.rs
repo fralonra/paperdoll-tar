@@ -1,6 +1,6 @@
 use std::{
     fs::{write, File},
-    io::read_to_string,
+    io::{read_to_string, Read},
     path::{Path, PathBuf},
 };
 
@@ -19,8 +19,14 @@ pub fn load<P>(path: P) -> Result<PaperdollFactory>
 where
     P: AsRef<Path>,
 {
-    let file = File::open(&path)?;
-    let mut archive = Archive::new(file);
+    read(File::open(&path)?)
+}
+
+pub fn read<R>(r: R) -> Result<PaperdollFactory>
+where
+    R: Read,
+{
+    let mut archive = Archive::new(r);
 
     let temp_dir = TempDir::new(FILE_NAME_TEMP_DIR)?;
     archive.unpack(temp_dir.path())?;
