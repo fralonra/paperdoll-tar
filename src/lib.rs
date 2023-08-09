@@ -67,33 +67,31 @@ where
     PaperdollFactory::from_manifest(manifest)
 }
 
-pub fn save<P>(manifest: &Manifest, path: P) -> Result<()>
+pub fn save<P>(manifest: &mut Manifest, path: P) -> Result<()>
 where
     P: AsRef<Path>,
 {
     let temp_dir = TempDir::new(FILE_NAME_TEMP_DIR)?;
 
-    let manifest_str = serde_yaml::to_string(manifest)?;
-
-    let manifest_path = temp_dir.path().clone().join(FILE_NAME_MANIFEST);
-    write(manifest_path, manifest_str)?;
-
-    for doll in &manifest.dolls {
+    for doll in &mut manifest.dolls {
         if doll.image.is_empty() {
             continue;
         }
 
-        let filename = if doll.path.is_empty() {
-            format!("{}.png", doll.id())
-        } else {
-            PathBuf::from(&doll.path)
-                .file_name()
-                .unwrap()
-                .to_string_lossy()
-                .to_string()
-        };
+        let extension = (!doll.path.is_empty())
+            .then(|| {
+                PathBuf::from(&doll.path)
+                    .extension()
+                    .map(|ext| ext.to_string_lossy().to_string())
+            })
+            .flatten()
+            .unwrap_or("png".to_owned());
 
-        let img_path = temp_dir.path().clone().join(filename);
+        let filename = format!("doll_{}.{}", doll.id(), extension);
+
+        let img_path = temp_dir.path().clone().join(&filename);
+
+        doll.path = filename;
 
         image::save_buffer(
             img_path,
@@ -104,22 +102,25 @@ where
         )?;
     }
 
-    for fragment in &manifest.fragments {
+    for fragment in &mut manifest.fragments {
         if fragment.image.is_empty() {
             continue;
         }
 
-        let filename = if fragment.path.is_empty() {
-            format!("{}.png", fragment.id())
-        } else {
-            PathBuf::from(&fragment.path)
-                .file_name()
-                .unwrap()
-                .to_string_lossy()
-                .to_string()
-        };
+        let extension = (!fragment.path.is_empty())
+            .then(|| {
+                PathBuf::from(&fragment.path)
+                    .extension()
+                    .map(|ext| ext.to_string_lossy().to_string())
+            })
+            .flatten()
+            .unwrap_or("png".to_owned());
 
-        let img_path = temp_dir.path().clone().join(filename);
+        let filename = format!("fragment_{}.{}", fragment.id(), extension);
+
+        let img_path = temp_dir.path().clone().join(&filename);
+
+        fragment.path = filename;
 
         image::save_buffer(
             img_path,
@@ -129,6 +130,11 @@ where
             image::ColorType::Rgba8,
         )?;
     }
+
+    let manifest_str = serde_yaml::to_string(manifest)?;
+
+    let manifest_path = temp_dir.path().clone().join(FILE_NAME_MANIFEST);
+    write(manifest_path, manifest_str)?;
 
     let output = File::create(path)?;
 
