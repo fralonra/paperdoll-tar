@@ -6,7 +6,7 @@ use std::{
 
 use anyhow::Result;
 pub use paperdoll;
-use paperdoll::{factory::PaperdollFactory, manifest::Manifest};
+use paperdoll::{Manifest, PaperdollFactory};
 use tar::{Archive, Builder};
 use tempdir::TempDir;
 
