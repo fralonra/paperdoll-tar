@@ -1,3 +1,17 @@
+//! [Tar](https://en.wikipedia.org/wiki/Tar_%28computing%29) archive container format for [paperdoll](https://github.com/fralonra/paperdoll).
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use paperdoll_tar::paperdoll;
+//!
+//! let factory = paperdoll::PaperdollFactory::default();
+//!
+//! paperdoll_tar::save(&mut factory.to_manifest(), "/path/to/save/your.ppd");
+//!
+//! let factory = paperdoll_tar::load("/path/to/save/your.ppd").unwrap();
+//! ```
+
 use std::{
     fs::{write, File},
     io::{read_to_string, Read},
@@ -10,11 +24,15 @@ use paperdoll::{Manifest, PaperdollFactory};
 use tar::{Archive, Builder};
 use tempdir::TempDir;
 
+/// The file extension.
 pub const EXTENSION_NAME: &'static str = "ppd";
 
+/// The file name of the manifest file saved in the `ppd` file.
 pub const FILE_NAME_MANIFEST: &'static str = "manifest.yml";
-pub const FILE_NAME_TEMP_DIR: &'static str = "paperdoll_ppd_";
 
+const FILE_NAME_TEMP_DIR: &'static str = "paperdoll_ppd_";
+
+/// Loads a paperdoll project from the path of a `ppd` file.
 pub fn load<P>(path: P) -> Result<PaperdollFactory>
 where
     P: AsRef<Path>,
@@ -22,6 +40,7 @@ where
     read(File::open(&path)?)
 }
 
+/// Reads a paperdoll project from a reader containing the bytes of a `ppd` file.
 pub fn read<R>(r: R) -> Result<PaperdollFactory>
 where
     R: Read,
@@ -67,6 +86,7 @@ where
     PaperdollFactory::from_manifest(manifest)
 }
 
+/// Saves a `ppd` file using the given manifest to the path.
 pub fn save<P>(manifest: &mut Manifest, path: P) -> Result<()>
 where
     P: AsRef<Path>,
