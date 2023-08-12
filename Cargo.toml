@@ -9,6 +9,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/fralonra/paperdoll-tar"
 keywords = ["paperdoll", "paperdoll-tar"]
+exclude = [".gitignore", ".github/*"]
 
 [dependencies]
 anyhow = "1.0"
