@@ -14,7 +14,7 @@ exclude = [".gitignore", ".github/*"]
 [dependencies]
 anyhow = "1.0"
 image = "0.24"
-paperdoll = "0.1.0"
+paperdoll = "0.1.1"
 serde_yaml = "0.9"
 tar = "0.4"
 tempdir = "0.3"
