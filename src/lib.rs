@@ -50,7 +50,7 @@ where
     let temp_dir = TempDir::new(FILE_NAME_TEMP_DIR)?;
     archive.unpack(temp_dir.path())?;
 
-    let manifest_path = temp_dir.path().clone().join(FILE_NAME_MANIFEST);
+    let manifest_path = temp_dir.path().join(FILE_NAME_MANIFEST);
     let manifest_file = File::open(manifest_path)?;
 
     let mut manifest: Manifest = serde_yaml::from_str(&read_to_string(manifest_file)?)?;
@@ -60,7 +60,7 @@ where
             continue;
         }
 
-        let img_path = temp_dir.path().clone().join(&doll.path);
+        let img_path = temp_dir.path().join(&doll.path);
         let img = image::open(img_path)?.into_rgba8();
 
         doll.image.width = img.width();
@@ -73,7 +73,7 @@ where
             continue;
         }
 
-        let img_path = temp_dir.path().clone().join(&fragment.path);
+        let img_path = temp_dir.path().join(&fragment.path);
         let img = image::open(img_path)?.into_rgba8();
 
         fragment.image.width = img.width();
@@ -117,7 +117,7 @@ where
 
         let filename = format!("doll_{}.{}", doll.id(), extension);
 
-        let img_path = temp_dir.path().clone().join(&filename);
+        let img_path = temp_dir.path().join(&filename);
 
         doll.path = filename;
 
@@ -154,7 +154,7 @@ where
 
         let filename = format!("fragment_{}.{}", fragment.id(), extension);
 
-        let img_path = temp_dir.path().clone().join(&filename);
+        let img_path = temp_dir.path().join(&filename);
 
         fragment.path = filename;
 
@@ -169,7 +169,7 @@ where
 
     let manifest_str = serde_yaml::to_string(manifest)?;
 
-    let manifest_path = temp_dir.path().clone().join(FILE_NAME_MANIFEST);
+    let manifest_path = temp_dir.path().join(FILE_NAME_MANIFEST);
     write(manifest_path, manifest_str)?;
 
     let output = File::create(path)?;
